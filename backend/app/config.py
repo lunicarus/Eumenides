@@ -1,4 +1,5 @@
-from pydantic import BaseSettings, AnyUrl
+from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic import AnyUrl
 
 class Settings(BaseSettings):
     TELEGRAM_API_ID: int
@@ -9,5 +10,5 @@ class Settings(BaseSettings):
 
     class Config:
         env_file = ".env"
-
+        extra = "ignore"  # <-- ignore any extra fields 
 settings = Settings()

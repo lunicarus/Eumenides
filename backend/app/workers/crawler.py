@@ -12,6 +12,7 @@ async def run_crawl(handles: list):
     usecase = IngestTelegramHandle(account_repo=repo, telegram_adapter=type("A", (), {"fetch_public_channel_metadata": fetch_public_channel_metadata}))
 
     for h in handles:
+        logging.info(f"Processing handle: {h}")
         dto = IngestHandleDTO(platform="telegram", raw_handle=h, discovered_at=datetime.utcnow())
         try:
             await usecase.execute(dto)

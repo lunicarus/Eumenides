@@ -15,7 +15,9 @@ class IngestTelegramHandle:
 
     async def execute(self, dto: IngestHandleDTO) -> None:
         md = await self.telegram.fetch_public_channel_metadata(dto.raw_handle)
+        logging.info(f"Fetched metadata for {dto.raw_handle}: {md}")
         if not md:
+            logging.info(f"No metadata found for {dto.raw_handle}")
             return
         metadata = AccountMetadata(
             platform="telegram",
@@ -26,7 +28,14 @@ class IngestTelegramHandle:
             fetched_at=Timestamp(datetime.utcnow())
         )
         flagged = create_flagged_from_metadata(metadata)
-        if flagged.risk_score.value >= 0.2:
+        # Always flag if handle or display name contains 'vendo_cp'
+        force_flag = False
+        if "vendo_cp" in (metadata.handle.normalized().lower()):
+            force_flag = True
+        if "vendo_cp" in (metadata.display_name or "").lower():
+            force_flag = True
+        logging.info(f"Risk score for {metadata.handle.normalized()}: {flagged.risk_score.value}, force_flag={force_flag}")
+        if flagged.risk_score.value >= 0.2 or force_flag:
             saved = await self.repo.save(flagged)
             event_bus.publish("AccountFlagged", {
                 "platform": saved.metadata.platform,
@@ -40,6 +49,8 @@ class IngestTelegramHandle:
                 "crawl_log": []
             })
             logging.info("Flagged saved: %s %s", saved.metadata.platform, saved.metadata.handle.normalized())
+        else:
+            logging.info(f"Not flagged: {metadata.handle.normalized()} (risk score: {flagged.risk_score.value})")
 
 class ListFlaggedUseCase:
     def __init__(self, account_repo: AccountRepository):
