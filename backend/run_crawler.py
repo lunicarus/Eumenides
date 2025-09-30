@@ -28,14 +28,14 @@ async def search_and_crawl(keyword: str, limit: int = 20):
 
 if __name__ == "__main__":
     manual_handles = [
-        "cpselq0", "cpselq1"#, "cpselq2", "cpselq3", "cpselq4", "cpselq5", "cpselq6", "cpselq7", "cpselq8", "cpselq9","hotlinkse","hotlinkso"
+        "cpselq0", "cpselq1", "cpselq2", "cpselq3", "cpselq4", "cpselq5", "cpselq6", "cpselq7", "cpselq8", "cpselq9","hotlinkse","hotlinkso"
     ]
     keywords = [
-        "cpsel", "vendo_cp", #"kidspor","hotlinks" 
+        "cpsel", "vendo_cp", "kidspor","hotlinks","hotlinkse","hotlinkso" 
     ]  # Add as many as you want
     delay_seconds = 30  # Big delay between keyword searches
     safe_handles = [
-        "kidsport", "kidsportschool" # Add any handles you want to exclude
+        "kidsport", "kidsportschool","CPSEliteCRMbot","rcpisowifivendo2bot" # Add any handles you want to exclude
     ]
 
     async def combined_crawl():

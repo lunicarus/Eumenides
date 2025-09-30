@@ -17,3 +17,15 @@ backend/app/domain/__pycache__/__init__.cpython-312.pyc
 backend/app/domain/__pycache__/entities.cpython-312.pyc
 backend/app/domain/__pycache__/repositories.cpython-312.pyc
 .gitignore
+backend/relatorio_contas_suspeitas.pdf
+backend/relatorio_contas_suspeitas.csv
+backend/flagged_accounts_report.pdf
+backend/flagged_accounts_report.csv
+backend/app/workers/__pycache__/crawler.cpython-312.pyc
+backend/app/infra/__pycache__/telegram_client.cpython-312.pyc
+backend/app/infra/__pycache__/sql_repository.cpython-312.pyc
+backend/app/infra/__pycache__/export_adapter.cpython-312.pyc
+backend/app/infra/__pycache__/event_bus.cpython-312.pyc
+backend/app/infra/__pycache__/__init__.cpython-312.pyc
+backend/app/domain/__pycache__/services.cpython-312.pyc
+backend/app/domain/__pycache__/value_objects.cpython-312.pyc

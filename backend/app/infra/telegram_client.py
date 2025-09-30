@@ -25,22 +25,48 @@ async def fetch_public_channel_metadata(username_or_link: str):
     except Exception:
         return None
 
+    # Try to extract username from multiple possible fields
+    username = getattr(entity, "username", None)
+    if not username and hasattr(entity, "input_peer") and hasattr(entity.input_peer, "user_id"):
+        username = str(getattr(entity.input_peer, "user_id", None))
+    if not username and hasattr(entity, "id"):
+        username = str(getattr(entity, "id", None))
+
+    # Default values
+    display_name = None
+    description = None
+    participants_count = None
+
+    # User or channel/group logic
+    from telethon.tl.types import User, Channel, Chat
+    if isinstance(entity, User):
+        # For users: display_name = first_name + last_name, description = about (bio)
+        display_name = ((entity.first_name or "") + (f" {entity.last_name}" if entity.last_name else "")).strip()
+        # Try to get bio (about)
+        try:
+            from telethon.tl.functions.users import GetFullUser
+            full = await _client(GetFullUser(entity.id))
+            description = getattr(full.full_user, "about", None)
+        except Exception:
+            description = None
+    elif isinstance(entity, (Channel, Chat)):
+        # For channels/groups: display_name = title, description = about
+        display_name = getattr(entity, "title", None)
+        try:
+            from telethon.tl.functions.channels import GetFullChannel
+            full = await _client(GetFullChannel(entity))
+            description = getattr(full.full_chat, "about", None)
+            participants_count = getattr(full.full_chat, "participants_count", None)
+        except Exception:
+            description = None
+            participants_count = None
+
     result = {
-        "username": getattr(entity, "username", None),
-        "title": getattr(entity, "title", None),
+        "username": username,
+        "title": display_name,
         "id": getattr(entity, "id", None),
-        "description": None,
-        "participants_count": None,
+        "description": description,
+        "participants_count": participants_count,
         "fetched_at": datetime.utcnow().isoformat()
     }
-
-    try:
-        from telethon.tl.functions.channels import GetFullChannel
-        full = await _client(GetFullChannel(entity))
-        result["description"] = getattr(full.full_chat, "about", None)
-        result["participants_count"] = getattr(full.full_chat, "participants_count", None)
-    except Exception:
-        result["description"] = None
-        result["participants_count"] = None
-
     return result
