@@ -1,3 +1,4 @@
 # Eumenides
 
-Complete backend (DDD) + frontend scaffold. See backend/README.md for details.
+Projeto para a Identificação de Contas em Redes Sociais que realizam a pratica de Comercialização de Conteudos Ilegais 
+
